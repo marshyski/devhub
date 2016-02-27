@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devhub - {{ title }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/app/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">DevHub</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Discover</a>
+            <ul class="dropdown-menu">
+              <li><a href="/search/announcement">Announcements</a></li>
+              <li><a href="/search/event">Events</a></li>
+              <li><a href="/search/user">Users</a></li>
+            </ul>
+          </li>
+          {% if idd %}
+          <li><a href="{{ url_for('post') }}">Post</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="{{ pic_url }}" height="42" width="42"></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('login') }}">Login with Github</a></li>
+            </ul>
+          </li>
+         {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <h1 class='title'></h1>
+  <div class="container">
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>{{ error }}</strong>
+    </div>
+    {% endif %}
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-primary alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>{{ message }}</strong>
+    </div>
+    {% endfor %}
+
+    <br><br>
+  </div>
+
+  <div class="container">
+      <div class="row well">
+  		<div class="col-md-3">
+  			<div class="profile-sidebar">
+  				<div class="profile-userpic">
+  					<img src="{{ picture }}" class="img-responsive" alt="">
+  				</div>
+  				<div class="profile-usertitle">
+  					<div class="profile-usertitle-name">
+              {{ name }}
+  					</div>
+            <div class="profile-usertitle-job">
+  						<p>Page views: {{ incr }}</p>
+  					</div>
+  				</div>
+  				<div class="profile-userbuttons">
+            {% if delete_button %}
+            <a href="/delete/{{ number }}" role="button" class="btn btn-danger btn-3d btn-sm">Delete</a>
+            {% endif %}
+  				</div>
+  			</div>
+  		</div>
+      <div class="col-md-9">
+        <div class="profile-content">
+              <div class="form-group">
+                <label for="title" class="col-sm-3 control-label">Title</label>
+                <div class="col-sm-9">
+                  {{ title }}
+                </div>
+              </div><br><br>
+              <div class="form-group">
+                <label for="title" class="col-sm-3 control-label">Post Date</label>
+                <div class="col-sm-9">
+                  {{ post_date }}
+                </div>
+              </div><br><br>
+              <div class="form-group">
+                <label for="link" class="col-sm-3 control-label">Link</label>
+                <div class="col-sm-9">
+                  <a href="{{ link }}" target="_blank">{{ link }}</a>
+                </div>
+              </div><br><br>
+              <div class="form-group">
+                <label for="type_select" class="col-sm-3 control-label">Type</label>
+                <div class="col-sm-9">
+                  {{ type_select }}
+                </div>
+              </div><br><br>
+              <div class="form-group">
+                <label for="message" class="col-sm-3 control-label">Description</label>
+                <div class="col-sm-9">
+                  {{ message }}
+                </div>
+              </div>
+            </div>
+      </div>
+    </div>
+  </div>
+   <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+
+
+   <script>
+     $.material.init();
+   </script>
+</body>
+</html>

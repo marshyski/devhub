@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Devhub - Search</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/app/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/app/calaca.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/app/app.css') }}">
+    <script src="{{ url_for('static', filename='bower_components/angular/angular.min.js') }}"></script>
+    <!--[if IE]>
+        <script src='http://html5shiv.googlecode.com/svn/trunk/html5.js'></script>
+    <![endif]-->
+</head>
+<body ng-app='calaca' ng-controller='calacaCtrl'>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/" target="_self">DevHub</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{ url_for('index') }}" target="_self">Home</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Discover</a>
+            <ul class="dropdown-menu">
+              <li><a href="#" ng-click="entersearch ('announcement')">Announcements</a></li>
+              <li><a href="#" ng-click="entersearch ('event')">Events</a></li>
+              <li><a href="#" ng-click="entersearch ('user')">Users</a></li>
+            </ul>
+          </li>
+          {% if idd %}
+          <li><a href="{{ url_for('post') }}" target="_self">Post</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="{{ pic_url }}" height="42" width="42"></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('logout') }}" target="_self">Logout</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('login') }}" target="_self">Login with Github</a></li>
+            </ul>
+          </li>
+         {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<!-- Title and search box -->
+<h1 class='title'></h1>
+<div class="container" ng-cloak>
+<header class='row well'>
+  <div class='form-group'>
+    <input type='text' class='search-text form-control' placeholder='Search tech, announcement and event' ng-init="query='{{ tech }}'" autofocus ng-model='query' ng-change='delayedSearch(0)'>
+    <br>
+    <button type="button" class="btn-primary btn btn-3d btn-sm" ng-click="entersearch ('announcement')">Announcements</button>
+    <button type="button" class="btn-primary btn btn-3d btn-sm" ng-click="entersearch ('event')">Events</button>
+    <button type="button" class="btn-primary btn btn-3d btn-sm" ng-click="entersearch ('user')">Users</button><br>
+    {% raw %}
+    <p id='response-details'>{{(hits | number) || 0}} {{resultsLabel || 'results'}} ({{(timeTook || 0)}}ms)</p>
+  </div>
+</div>
+</header>
+
+<!-- Listing of search results -->
+<main class='results-container' ng-cloak>
+  <section class='results-info'>
+    <p ng-show='paginationEnabled()' id='pagination-details'>Showing {{paginationLowerBound}} - {{paginationUpperBound}}</p>
+  </section>
+  <section class='results'>
+    <article class='result well' ng-repeat='result in results track by $id(result)'>
+      <div class="row grid-divider">
+        <div class="col-sm-1">
+          <div class="col-padding">
+            <i class="fa {{ result.icon }} fa-2x" style="padding-top: 15px;"></i><br><br>
+          </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="col-padding">
+        <a href="{{result.url}}" target="_blank"><h3>{{result.title}}<font style="opacity: 0.0">{{result.type}}</font></h3></a>
+        <p><a href="mailto:{{ result.email }}">{{ result.email }}</a> {{result.name}} {{result.post_date}}</p>
+        <p>{{result.top_lang}} {{result.second_lang}}</p>
+        <p ng-if="result.tags">Tags: {{result.tags}}</p><br>
+      </div>
+      </div>
+      </div>
+      {% endraw %}
+    </article>
+  </section>
+  <section class='pagination-controls'>
+    <button ng-click='search(-1)' ng-show='paginationEnabled() && offset !== 0' class='pager'>Previous</button><button ng-click='search(1)' ng-show='paginationEnabled()' class='pager'>Next</button>
+  </section>
+</main>
+
+<!-- Load resources -->
+<script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/angular-animate/angular-animate.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/elasticsearch/elasticsearch.angular.min.js') }}"></script>
+<script>
+var CALACA_CONFIGS = {
+        url: "http://localhost:9200",
+        index_name: "devhub",
+        type: "posts",
+        size: "10",
+        search_delay: "500"
+}
+</script>
+<script src="{{ url_for('static', filename='bower_components/app/app.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/app/controllers.js') }}"></script>
+<script src="{{ url_for('static', filename='bower_components/app/services.js') }}"></script>
+</body>
+</html>

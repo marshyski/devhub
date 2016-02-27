@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devhub</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/jquery-typeahead/dist/jquery.typeahead.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/app/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand navbar-brand-centered" href="#"></a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Discover</a>
+            <ul class="dropdown-menu">
+              <li><a href="/search/announcement">Announcements</a></li>
+              <li><a href="/search/event">Events</a></li>
+              <li><a href="/search/user">Users</a></li>
+            </ul>
+          </li>
+          {% if idd %}
+          <li><a href="{{ url_for('post') }}">Post</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="{{ pic_url }}" height="42" width="42"></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('login') }}">Login with Github</a></li>
+            </ul>
+          </li>
+         {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container"><br><br><br><br>
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>{{ error }}</strong>
+    </div>
+    {% endif %}
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-primary alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>{{ message }}</strong>
+    </div>
+    {% endfor %}
+</div>
+  <div class="container">
+  <div class="row grid-divider">
+  <div class="col-sm-5">
+    <div class="col-padding">
+      <div class="title">
+      <h1 class='title-border'><font color="#212121">DevHub</font></h1>
+    </div>
+  </div><br>
+    <form method="POST" action="" accept-charset="UTF-8" id="form-country_v1" name="form-country_v1">
+    <div class="form-group">
+      <div class="typeahead-container">
+          <input class="form-control" id="tech_query" name="tech" type="text" placeholder="Enter Tech" autocomplete="on">
+      </div><br>
+      <button class="btn-primary btn btn-md btn-3d" input type="submit">Search</button>
+    </div>
+    </form>
+  </div>
+  <div class="col-sm-4">
+    <div class="col-padding">
+      <h3 style="padding-top: 150px;"><mark>source ~/.devhub</mark></h3><br>
+      <p align="left" style="font-weight: strong;">We’re a community of devs looking to find other devs within a large org.</p>
+      <br>
+      <h3>Recent Posts</h3><br>
+      {% for posts in recent_posts %}
+        {% set post = posts.split('-') %}
+        <span class="label label-primary"><a href="{{ post[0] }}" target="_blank" style="color: #fff;">{{ post[1] }}</a></span>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+  <div class="landing-bkg">
+    <div class="bkg">
+      <br>
+    </div>
+  </div>
+  </div>
+   <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='bower_components/jquery-typeahead/dist/jquery.typeahead.min.js') }}"></script>
+   <script>
+   $('#tech_query').typeahead({
+    order: "desc",
+    source: {
+        data: [
+          "Assembly","Bash","C","C#","C++","D","Dart","Erlang","F#","Go","Groovy","Haskell","Java","JavaScript","Lisp","Lua","Objective-C","PHP","Python","R","Ruby","Rust","Scala","Swift","VBScript","VisualBasic"
+        ]
+    },
+    callback: {
+        onInit: function (node) {
+            console.log('Typeahead Initiated on ' + node.selector);
+        }
+    }
+});
+   </script>
+</body>
+</html>

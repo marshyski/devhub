@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Devhub</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/jquery-typeahead/dist/jquery.typeahead.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/app/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bower_components/font-awesome/css/font-awesome.min.css') }}">
+</head>
+<body>
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">DevHub</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Discover</a>
+            <ul class="dropdown-menu">
+              <li><a href="/search/announcement">Announcements</a></li>
+              <li><a href="/search/event">Events</a></li>
+              <li><a href="/search/user">Users</a></li>
+            </ul>
+          </li>
+          {% if idd %}
+          <li><a href="{{ url_for('post') }}">Post</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="{{ pic_url }}" height="42" width="42"></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('logout') }}">Logout</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Login <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ url_for('login') }}">Login with Github</a></li>
+            </ul>
+          </li>
+         {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <h1 class='title'></h1>
+  <div class="container">
+    {% if error %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>{{ error }}</strong>
+    </div>
+    {% endif %}
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-primary alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <strong>Success:   <a href="{{ message }}" target="_blank">{{ message }}</a></strong>
+    </div>
+    {% endfor %}
+
+    <br><br>
+    <form method="POST" action="" accept-charset="UTF-8">
+      <div class="container">
+        <div class="row well">
+        <div class="profile-content">
+          <div class="form-group">
+            <label for="title" class="control-label">Title</label>
+              <input type="text" class="form-control" maxlength="60" id="title" name="title" placeholder="Title">
+          </div><br><br>
+          <div class="form-group">
+            <div class="typeahead-container">
+            <label for="link" class="control-label">Link</label>
+              <input type="text" class="form-control" id="tech_query" name="link" placeholder="Link" autocomplete="on">
+            </div>
+          </div><br><br>
+          <div class="form-group">
+            <label for="tags" class="control-label">Tags</label>
+              <input type="text" class="form-control" id="tags" name="tags" data-role="tagsinput" placeholder="Tags">
+          </div><br><br>
+          <div class="form-group">
+            <label for="type_select" class="control-label">Type</label>
+              <select class="form-control" name="type_select">
+                <option name="type_select" id="type_select" value="Announcement">Announcement</option>
+                <option name="type_select" id="type_select" value="Event">Event</option>
+              </select>
+          </div><br><br>
+          <div class="form-group">
+            <label for="message" class="control-label">Description</label><br>
+            <textarea class="textarea" rows="4" name="message" id="message" maxlength="160" placeholder="160 Characters Max"></textarea>
+          <br><br><br><br><br>
+            <center><button class="btn-primary btn btn-lg btn-3d" input type="submit">Submit</button></center>
+          </div>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+</div>
+</div>
+   <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='bower_components/jquery-typeahead/dist/jquery.typeahead.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='bower_components/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js') }}"></script>
+   <script>
+   $('#tech_query').typeahead({
+    order: "desc",
+    source: {
+        data: [
+          "Assembly","Bash","C","C#","C++","D","Dart","Erlang","F#","Go","Groovy","Haskell","Java","JavaScript","Lisp","Lua","Objective-C","PHP","Python","R","Ruby","Rust","Scala","Swift","VBScript","VisualBasic"
+        ]
+    },
+    callback: {
+        onInit: function (node) {
+            console.log('Typeahead Initiated on ' + node.selector);
+        }
+    }
+});
+   </script>
+</body>
+</html>
