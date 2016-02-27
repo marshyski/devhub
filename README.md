@@ -1,7 +1,7 @@
 devhub
 ====
 
-Simple search-enabled web app to post dev related content with GitHub auth enabled.
+Simple search enabled web app to post dev related content with GitHub auth enabled.
 --------
 
 
